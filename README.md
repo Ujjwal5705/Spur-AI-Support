@@ -41,7 +41,7 @@ Key capabilities:
 | Database | PostgreSQL (Render managed) + Prisma 7 ORM (driver adapters) |
 | LLM | Groq (Llama 3.1 8B) via OpenAI SDK |
 | Validation | Zod |
-| Deployment | Backend & DB: Render; Frontend: Vercel |
+| Deployment | Backend & DB: Render, Frontend: Vercel |
 
 ## 🏛 Architecture
 ```text
