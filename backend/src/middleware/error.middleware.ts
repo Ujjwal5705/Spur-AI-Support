@@ -4,11 +4,11 @@ export function errorHandler(
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   console.error("Global Error Caught:", err.stack || err.message);
 
-  if (err instanceof SyntaxError && 'body' in err) {
+  if (err instanceof SyntaxError && "body" in err) {
     return res.status(400).json({ error: "Invalid JSON format" });
   }
 

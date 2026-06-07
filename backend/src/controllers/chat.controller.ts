@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { prisma } from "../db/prisma.js";
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 import { generateReply } from "../services/llm.service.js";
 import { chatSchema } from "../validators/chat.validator.js";
 
@@ -74,12 +74,22 @@ export const sendMessage = async (req: Request, res: Response) => {
     console.error("Error constructor name:", error?.constructor?.name);
 
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      return res.status(503).json({ error: "Database temporarily unavailable. Please try again." });
+      return res
+        .status(503)
+        .json({ error: "Database temporarily unavailable. Please try again." });
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P1001' || error.code === 'P2021' || error.message.includes('readonly')) {
-        return res.status(503).json({ error: "Database temporarily unavailable. Please try again." });
+      if (
+        error.code === "P1001" ||
+        error.code === "P2021" ||
+        error.message.includes("readonly")
+      ) {
+        return res
+          .status(503)
+          .json({
+            error: "Database temporarily unavailable. Please try again.",
+          });
       }
     }
 
@@ -112,12 +122,18 @@ export const getHistory = async (req: Request, res: Response) => {
     console.error("Error constructor name:", error?.constructor?.name);
 
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      return res.status(503).json({ error: "Database temporarily unavailable. Please try again." });
+      return res
+        .status(503)
+        .json({ error: "Database temporarily unavailable. Please try again." });
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P1001' || error.code === 'P2021') {
-        return res.status(503).json({ error: "Database temporarily unavailable. Please try again." });
+      if (error.code === "P1001" || error.code === "P2021") {
+        return res
+          .status(503)
+          .json({
+            error: "Database temporarily unavailable. Please try again.",
+          });
       }
     }
 
