@@ -180,3 +180,64 @@ We pass the last N messages (full conversation history) to the LLM. For long con
 
 **Fallback:** Any API error (4xx, 5xx, timeout) returns:
 “Sorry, our AI assistant is currently unavailable. Please try again later.”
+
+## 🛡 Error Handling & Robustness
+| Scenario                             | Mechanism                                                                 | Response                                          |
+|--------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------|
+| Empty message                        | Zod `min(1)`                                                              | 400 "Message cannot be empty"                     |
+| Message >2000 chars                  | Zod `max(2000)`                                                           | 400 "Message too long"                            |
+| Malformed JSON                       | Express `json()` middleware + global error handler checks SyntaxError    | 400 "Invalid JSON format"                         |
+| Non‑string message                   | Zod type validation                                                       | 400 "Expected string, received number"            |
+| LLM API key missing/invalid          | try/catch in `llm.service.ts`                                            | 200 (OK) with fallback message                    |
+| Rate limit (429)                     | Caught by OpenAI client, fallback returned                                | 200 (OK) with "You're sending messages too quickly..." |
+| Database unreachable (P1001, P2021) | Prisma error code handling in controller                                  | 503 "Database temporarily unavailable"            |
+| Backend crash                        | Never – all synchronous and asynchronous errors are caught               | Server stays alive                                |
+
+**Global error handler snippet:**
+```ts
+if (err instanceof SyntaxError && 'body' in err) {
+  return res.status(400).json({ error: "Invalid JSON format" });
+}
+```
+
+## 🎨 UX Features
+- Session isolation - Each browser tab uses sessionStorage, preventing cross‑tab leakage.
+- Typing indicator - Animated three‑dot loader while waiting for LLM.
+- Auto‑scroll - Scrolls to latest message using useRef + scrollIntoView.
+- Input validation - Frontend pre‑checks empty/long messages before API call.
+- Error messages - Appear as chat bubbles (red for errors, purple for AI).
+- Responsive design - Works on mobile and desktop (Tailwind + custom CSS fallback).
+
+## 🚀 Deployment
+### Backend + PostgreSQL (Render)
+- Build command: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+- Start command: node dist/server.js
+- Environment: DATABASE_URL (Render internal PostgreSQL), GROQ_API_KEY
+- Health check: GET /health returns 200 OK
+
+### Frontend (Vercel)
+- Framework preset: Vite
+- Build command: npm run build
+- Output directory: dist
+- Environment variable: VITE_API_URL = backend Render URL
+- CORS: Backend allows origin from Vercel frontend domain.
+
+## 🧪 Testing & Stress Scenarios
+Run these manual tests to verify robustness:
+
+| Test                          | How to execute                                                                     | Expected result                                                |
+|-------------------------------|------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| Empty message                 | Send `""` or spaces                                                                | Chat shows "Message cannot be empty"                           |
+| Very long message (3000 chars)| Send a long string                                                                 | "Message too long (max 2000)" – no API call                    |
+| Malformed JSON                | `curl -d '{"message":"hi"'`                                                        | HTTP 400 "Invalid JSON format"                                 |
+| Missing API key               | Remove `GROQ_API_KEY` from env & restart                                          | Fallback AI message, server does not crash                     |
+| Rate limiting                 | Send 30 requests in 2 seconds (e.g., `for i in {1..30}; do curl ... & done`)       | Some responses are "You're sending messages too quickly..."    |
+| Database disconnection        | Stop PostgreSQL service                                                             | Backend returns 503 with DB error, recovers when DB restarted  |
+| Session isolation             | Two tabs, chat separately, reload each                                              | Histories never mix                                            |
+| Conversation context          | Ask "What's return policy?" then "What about electronics?"                         | AI answers correctly or admits lack of knowledge               |
+| SQL injection attempt         | Send `'; DROP TABLE users; --`                                                     | Stored as plain text, no DB corruption (Prisma ORM)            |
+
+```text
+Built with ❤️ for the Spur engineering team.
+“Boring makes money” – but we made it fun.
+```
