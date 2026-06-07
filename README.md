@@ -80,3 +80,44 @@ Why this works:
 - Extensibility – Adding WhatsApp/Instagram channels would only require new routes + same services.
 - Type safety – Prisma + Zod ensure runtime and compile‑time correctness.
 
+
+## 🌐 Live URLs
+| Service       | URL                                                              |
+|---------------|------------------------------------------------------------------|
+| Frontend      | [https://spur-ai-support.vercel.app](https://spur-ai-support.vercel.app) |
+| Backend API   | [https://spur-chat-backend-9zh0.onrender.com](https://spur-chat-backend-9zh0.onrender.com) |
+| PostgreSQL    | Managed by Render (free tier, internal connection)              |
+
+## 💻 Local Development
+### Prerequisites
+- Node.js 20+
+- PostgreSQL (local or Docker)
+
+### Steps
+1. Clone repository
+```bash
+git clone https://github.com/Ujjwal5705/Spur-AI-Support.git
+cd Spur-AI-Support
+```
+
+2. Backend setup
+```bash
+cd backend
+cp .env.example .env
+# Edit .env – set DATABASE_URL and GROQ_API_KEY
+npm install
+npx prisma generate
+npx prisma migrate dev --name init
+npm run dev
+```
+
+3. Frontend setup (in a new terminal)
+```bash
+cd frontend
+cp .env.example .env
+# Set VITE_API_URL=http://localhost:5001
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 and start chatting.
