@@ -19,8 +19,6 @@ A production‑ready, full‑stack AI customer support agent that answers user q
 - [UX Features](#-ux-features)
 - [Deployment](#-deployment)
 - [Testing & Stress Scenarios](#-testing--stress-scenarios)
-- [Trade‑offs & Future Improvements](#-tradeoffs--future-improvements)
-- [Submission Notes](#-submission-notes)
 
 ## 📖 Overview
 This application simulates an e‑commerce live chat widget. Users type questions, and an AI agent replies based on seeded store policies (shipping, returns, support hours). The backend stores every message in PostgreSQL, maintains conversation context, and handles LLM failures, rate limits, and malformed input gracefully.
