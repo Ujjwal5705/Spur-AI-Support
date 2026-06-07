@@ -55,3 +55,28 @@ Key capabilities:
                                 └─────────────────────┘                 │   LLM      │
                                                                         └────────────┘
 ```
+
+### Backend structure (modular, extensible)
+
+```text
+src/
+├── controllers/
+│   └── chat.controller.ts     # route handlers, DB logic
+├── services/
+│   └── llm.service.ts         # LLM client & prompt design
+├── validators/
+│   └── chat.validator.ts      # Zod schema for /chat/message
+├── db/
+│   └── prisma.ts              # Prisma client with driver adapter
+├── middlewares/
+│   └── error.middleware.ts    # global error handler (JSON syntax, 500)
+├── routes/
+│   └── chat.routes.ts
+└── server.ts                  # app entry, CORS, environment
+```
+
+Why this works:
+- Separation of concerns – LLM logic can be swapped (e.g., to Anthropic) without touching controllers.
+- Extensibility – Adding WhatsApp/Instagram channels would only require new routes + same services.
+- Type safety – Prisma + Zod ensure runtime and compile‑time correctness.
+
