@@ -1,4 +1,4 @@
-# 🤖 Spur AI Support Agent
+# Spur AI Support Agent
 
 ![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000?logo=vercel)
 ![Backend](https://img.shields.io/badge/Backend-Render-46C3B?logo=render)
@@ -6,7 +6,7 @@
 
 A production‑ready, full‑stack AI customer support agent that answers user questions using a real LLM (Groq), persists conversations in PostgreSQL, and isolates sessions per browser tab. Built for the Spur founding engineer take‑home assignment.
 
-## 📋 Table of Contents
+## Table of Contents
 - [Overview](#-overview)
 - [Tech Stack](#-tech-stack)
 - [Architecture](#-architecture)
@@ -20,7 +20,7 @@ A production‑ready, full‑stack AI customer support agent that answers user q
 - [Deployment](#-deployment)
 - [Testing & Stress Scenarios](#-testing--stress-scenarios)
 
-## 📖 Overview
+## Overview
 This application simulates an e‑commerce live chat widget. Users type questions, and an AI agent replies based on seeded store policies (shipping, returns, support hours). The backend stores every message in PostgreSQL, maintains conversation context, and handles LLM failures, rate limits, and malformed input gracefully.
 
 Key capabilities:
@@ -31,7 +31,7 @@ Key capabilities:
 - Database disconnection recovery (503 with friendly message)
 - LLM API failures → fallback message, no crash
 
-## 🧰 Tech Stack
+## Tech Stack
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19 + TypeScript, Vite, Axios, TailwindCSS (custom fallback CSS) |
@@ -41,7 +41,7 @@ Key capabilities:
 | Validation | Zod |
 | Deployment | Backend & DB: Render, Frontend: Vercel |
 
-## 🏛 Architecture
+## Architecture
 ```text
 ┌─────────────┐     HTTPS       ┌─────────────────────┐     Prisma      ┌────────────┐
 │   Browser   │ ──────────────► │  Express Backend    │ ──────────────► │ PostgreSQL │
@@ -79,14 +79,14 @@ Why this works:
 - Type safety – Prisma + Zod ensure runtime and compile‑time correctness.
 
 
-## 🌐 Live URLs
+## Live URLs
 | Service       | URL                                                              |
 |---------------|------------------------------------------------------------------|
 | Frontend      | [https://spur-ai-support.vercel.app](https://spur-ai-support.vercel.app) |
 | Backend API   | [https://spur-chat-backend-9zh0.onrender.com](https://spur-chat-backend-9zh0.onrender.com) |
 | PostgreSQL    | Managed by Render (free tier, internal connection)              |
 
-## 💻 Local Development
+## Local Development
 ### Prerequisites
 - Node.js 20+
 - PostgreSQL (local or Docker)
@@ -123,7 +123,7 @@ Open http://localhost:5173 and start chatting.
 2. Update ```DATABASE_URL``` to ```file:./dev.db```
 3. No additional database server needed.
 
-## 🔐 Environment Variables
+## Environment Variables
 Backend (.env)
 ```env
 DATABASE_URL="postgresql://user:pass@localhost:5432/spur_chat_db"
@@ -159,7 +159,7 @@ model Message {
 - Indexes: conversationId is automatically indexed by Prisma (foreign key).
 - No auth – sessions identified by sessionId (cuid) stored in sessionStorage.
 
-## 🤖 LLM Integration & Prompting
+## LLM Integration & Prompting
 **Provider:** Groq (Llama 3.1 8B) – fast inference, free tier 30 requests/minute.
 
 **Prompt design (system message):**
@@ -200,7 +200,7 @@ We pass the last N messages (full conversation history) to the LLM. For long con
 **Fallback:** Any API error (4xx, 5xx, timeout) returns:
 “Sorry, our AI assistant is currently unavailable. Please try again later.”
 
-## 🛡 Error Handling & Robustness
+## Error Handling & Robustness
 | Scenario                             | Mechanism                                                                 | Response                                          |
 |--------------------------------------|---------------------------------------------------------------------------|---------------------------------------------------|
 | Empty message                        | Zod `min(1)`                                                              | 400 "Message cannot be empty"                     |
@@ -219,7 +219,7 @@ if (err instanceof SyntaxError && 'body' in err) {
 }
 ```
 
-## 🎨 UX Features
+## UX Features
 - Session isolation - Each browser tab uses sessionStorage, preventing cross‑tab leakage.
 - Typing indicator - Animated three‑dot loader while waiting for LLM.
 - Auto‑scroll - Scrolls to latest message using useRef + scrollIntoView.
@@ -227,7 +227,7 @@ if (err instanceof SyntaxError && 'body' in err) {
 - Error messages - Appear as chat bubbles (red for errors, purple for AI).
 - Responsive design - Works on mobile and desktop (Tailwind + custom CSS fallback).
 
-## 🚀 Deployment
+## Deployment
 ### Backend + PostgreSQL (Render)
 - Build command: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
 - Start command: node dist/server.js
@@ -241,7 +241,7 @@ if (err instanceof SyntaxError && 'body' in err) {
 - Environment variable: VITE_API_URL = backend Render URL
 - CORS: Backend allows origin from Vercel frontend domain.
 
-## 🧪 Testing & Stress Scenarios
+## Testing & Stress Scenarios
 Run these manual tests to verify robustness:
 
 | Test                          | How to execute                                                                     | Expected result                                                |
