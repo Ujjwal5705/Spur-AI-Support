@@ -114,10 +114,69 @@ npm run dev
 3. Frontend setup (in a new terminal)
 ```bash
 cd frontend
-cp .env.example .env
-# Set VITE_API_URL=http://localhost:5001
 npm install
 npm run dev
 ```
 
 Open http://localhost:5173 and start chatting.
+
+### Using SQLite (alternative for quick testing)
+1. Change provider in ```prisma/schema.prisma``` to ```sqlite```
+2. Update ```DATABASE_URL``` to ```file:./dev.db```
+3. No additional database server needed.
+
+## 🔐 Environment Variables
+Backend (.env)
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/spur_chat_db"
+GROQ_API_KEY="gsk_..."   # from console.groq.com
+PORT=5001                 
+```
+
+Frontend (.env.local or .env)
+```env
+VITE_API_URL="http://localhost:5001"   # or production backend URL
+Note: For Vercel deployment, set VITE_API_URL as an environment variable in the Vercel dashboard.
+```
+
+## 🗄 Database Schema (Prisma)
+```prisma
+model Conversation {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  messages  Message[]
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  sender         String   // "user" | "ai"
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+}
+```
+
+- Indexes: conversationId is automatically indexed by Prisma (foreign key).
+- No auth – sessions identified by sessionId (cuid) stored in sessionStorage.
+
+## 🤖 LLM Integration & Prompting
+**Provider:** Groq (Llama 3.1 8B) – fast inference, free tier 30 requests/minute.
+
+**Prompt design (system message):**
+```text
+You are Spur Store's AI customer support agent.
+Be concise, friendly, never invent policies.
+Store Policies:
+- Shipping: India, USA, UK, Canada; dispatch within 24h; delivery 3-7 business days.
+- Returns: 30 days, unused product; refund within 5 business days.
+- Support: Mon-Fri, 9AM-6PM IST.
+If you don't know, say: "I don't have that information yet. Please contact support."
+```
+
+**Context handling:**
+We pass the last N messages (full conversation history) to the LLM. For long conversations, token usage grows linearly, a future improvement would truncate history intelligently.
+
+**Fallback:** Any API error (4xx, 5xx, timeout) returns:
+“Sorry, our AI assistant is currently unavailable. Please try again later.”
