@@ -4,7 +4,7 @@
 ![Backend](https://img.shields.io/badge/Backend-Render-46C3B?logo=render)
 ![Stack](https://img.shields.io/badge/Stack-Node%20%7C%20Express%20%7C%20Postgres%20%7C%20Prisma%20%7C%20React-339933?logo=nodedotjs)
 
-A production‑ready, full‑stack AI customer support agent that answers user questions using a real LLM (Groq), persists conversations in PostgreSQL, and isolates sessions per browser tab. Built for the Spur founding engineer take‑home assignment.
+A production‑ready, full‑stack AI customer support agent that answers user questions using a real LLM (Groq), persists conversations in PostgreSQL, and isolates sessions per browser tab.
 
 ## Table of Contents
 - [Overview](#-overview)
