@@ -257,6 +257,6 @@ Run these manual tests to verify robustness:
 | SQL injection attempt         | Send `'; DROP TABLE users; --`                                                     | Stored as plain text, no DB corruption (Prisma ORM)            |
 
 ```text
-Built with ❤️ for the Spur engineering team.
+Built with ❤️ by Ujjwal Sharma.
 “Boring makes money” – but we made it fun.
 ```
