@@ -43,7 +43,7 @@ export async function generateReply(
   try {
     const response = await openai.chat.completions.create({
       model: "openai/gpt-oss-20b",
-      temperature: 0.7,
+      temperature: 0.3,
       messages: [
         {
           role: "system",
